@@ -12,3 +12,11 @@ Route::get('/products',[ProductController::class,'getProducts']);
 Route::post('/product',[ProductController::class,'addProduct']);
 Route::put('/product/{id}/update',[ProductController::class,'updateProduct']);
 Route::delete('/product/{id}/delete',[ProductController::class,'deleteProduct']);
+
+Route::middleware(['auth:sanctum','abilities:admin'])->group( function () {
+  
+});
+
+Route::middleware(['auth:sanctum','abilities:user'])->group( function () {
+ 
+});
