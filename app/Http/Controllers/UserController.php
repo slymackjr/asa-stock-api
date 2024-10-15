@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -21,27 +23,35 @@ class UserController extends Controller
                 'data' => $validate->messages(),
             ], 422);
         }
-    
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = $request->user();
-            $role = $user->role; // Assuming 'role' is a field in your users table
 
-            // Create token with abilities
-            $token = $user->createToken('authToken', [$role])->plainTextToken;
-            $token = $user->createToken('authToken')->plainTextToken;
+    $user = User::where('email', $request->email)->first();
+
+    if (!$user) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Invalid credentials.',
+        ], 401);
+    }
+
+    if (!Hash::check($request->password, $user->password)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Invalid credentials.',
+        ], 401);
+    }
+
+    // Create a token for the authenticated teacher
+    $token = $user->createToken('Authtoken', [$user->role])->plainTextToken;
+
+    // Return success response with teacher info and token
+    return response()->json([
+        'success' => true,
+        'message' => 'Authentication successful.',
+        'ability' => $user->role,
+        'token' => $token,
+        'user' => $user,
+    ], 200);
     
-            return response()->json([
-                'success' => true,
-                'message' => 'Login successful',
-                'token' => $token,
-                'data' => $user,
-            ], 200);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid Credentials',
-            ], 401);
-        }
     }
     
 }

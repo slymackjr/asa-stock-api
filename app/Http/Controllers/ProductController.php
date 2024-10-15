@@ -25,6 +25,23 @@ class ProductController extends Controller
         
     } 
 
+    public function getProduct(int $id){
+        $product = Product::findOrFail($id);
+        if($product){
+            return response()->json([
+                'success' => true,
+                'message' => 'Products retrieved successfully',
+                'data' => $product,
+            ],200,);
+        }else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No product found',
+                ],404,);
+        }
+        
+    } 
+
     public function addProduct(Request $request){
         $validate = Validator::make($request->all(),[
             'productName' => ['required'],
