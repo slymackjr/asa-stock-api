@@ -46,12 +46,23 @@ class UserController extends Controller
     // Return success response with teacher info and token
     return response()->json([
         'success' => true,
-        'message' => 'Authentication successful.',
+        'message' => 'Login successful.',
         'ability' => $user->role,
         'token' => $token,
         'user' => $user,
     ], 200);
     
+    }
+
+    public function logout(Request $request)
+    {
+        // Revoke the current user's token
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Logout successful.',
+        ], 200);
     }
     
 }
