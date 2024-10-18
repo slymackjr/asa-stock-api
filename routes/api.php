@@ -5,7 +5,6 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
 Route::middleware(['auth:sanctum','abilities:admin'])->group( function () {
     Route::get('/all-products',[ProductController::class,'getProducts']);
     Route::get('/product/{id}',[ProductController::class,'getProduct']);
@@ -22,3 +21,10 @@ Route::middleware(['auth:sanctum','abilities:user'])->group( function () {
 });
 
 Route::post('/login',[UserController::class,  'login']);
+// New testing route
+Route::get('/test-route', function () {
+    return response()->json([
+        'company' => 'ASA Fix Company Limited',
+        'status' => 'success'
+    ]);
+});
